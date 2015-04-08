@@ -1,18 +1,31 @@
 import java.io.*;
 import javax.swing.*;
 import java.net.*;
+import java.util.*;
 
 public class PokeUtility {
     public static void main(String args[]) {
         Search Search = new Search();
-        Pokemon bulb = (Pokemon) Search.loadData("Bulbasuar.obj");
-        System.out.println(bulb.getDexNumber());
+        
+        System.out.println("Files found:");
+        String[] files = Search.names();
+        for (int i = 0; i < files.length; i++) System.out.println(files[i]);
+        
+        System.out.println("Results for '" + args[0] + "'...");
+        String[] results = Search.searchByName(args[0]);
+        for (int i = 0; i < results.length; i++) System.out.println(results[i]);
     }
 }
 
 class Search {
-    public void searchByName(String keyword) {
-        
+    public String[] searchByName(String keyword) {
+        keyword = keyword.toLowerCase();
+        String[] names = this.names();
+        List<String> results = new ArrayList<String>();
+        for (int i = 0; i < names.length; i++) {
+            if (names[i].contains(keyword)) results.add(names[i]);
+        }
+        return results.toArray(new String[results.size()]);
     }
     public String[] names() {
         String[] namesOfPokemon = null;
@@ -22,6 +35,7 @@ class Search {
         } catch(Exception e) {
             System.err.println(e);
         }
+        for (int a = 0; a < namesOfPokemon.length; a++) namesOfPokemon[a] = namesOfPokemon[a].substring(0, namesOfPokemon[a].length() - 4).toLowerCase();
         return namesOfPokemon;
     }
     public Pokemon loadData(String filename) {
@@ -42,6 +56,7 @@ class Pokemon implements Serializable {
     public String dexNumber;
     public String name;
     public String type;
+    public String description;
     public String ability;
     public String hiddenAbility;
     public String evolution;
@@ -54,6 +69,9 @@ class Pokemon implements Serializable {
     }
     public String getType() {
         return this.type;
+    }
+    public String getDescription() {
+        return this.description;
     }
     public String getAbility() {
         return this.ability;
