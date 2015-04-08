@@ -9,11 +9,18 @@ public class PokeUtility {
         
         System.out.println("Files found:");
         String[] files = Search.names();
-        for (int i = 0; i < files.length; i++) System.out.println(files[i]);
+        System.out.println(files.length);
         
         System.out.println("Results for '" + args[0] + "'...");
         String[] results = Search.searchByName(args[0]);
-        for (int i = 0; i < results.length; i++) System.out.println(results[i]);
+        Pokemon result;
+        for (int i = 0; i < results.length; i++) {
+            result = Search.loadData(results[i]);
+            System.out.println((i + 1) + ". " + result.getDexNumber() + " " + result.getName());
+            System.out.println();
+            System.out.println("\tType:" + result.getType());
+            System.out.println();
+        }
     }
 }
 
@@ -38,11 +45,11 @@ class Search {
         for (int a = 0; a < namesOfPokemon.length; a++) namesOfPokemon[a] = namesOfPokemon[a].substring(0, namesOfPokemon[a].length() - 4).toLowerCase();
         return namesOfPokemon;
     }
-    public Pokemon loadData(String filename) {
+    public Pokemon loadData(String name) {
         Pokemon data = null;
         ObjectInputStream ois;
         try {
-            ois = new ObjectInputStream(new FileInputStream(new File("pokedex/" + filename)));
+            ois = new ObjectInputStream(new FileInputStream(new File("pokedex/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".obj")));
             data = (Pokemon) ois.readObject();
             ois.close();
         } catch(Exception e) {
