@@ -53,6 +53,7 @@ class Search {
 }
 
 class Pokemon implements Serializable {
+    
     public String dexNumber;
     public String name;
     public String type;
@@ -94,10 +95,11 @@ class Pokemon implements Serializable {
         }
     }
     
-    public void set(String dexNumber, String name, String type, String ability, String hiddenAbility, String evolution) {
+    public void set(String dexNumber, String name, String type, String description, String ability, String hiddenAbility, String evolution) {
         this.dexNumber = dexNumber;
         this.name = name;
         this.type = type;
+        this.description = description;
         this.ability = ability;
         this.hiddenAbility = hiddenAbility;
         this.evolution = evolution;
