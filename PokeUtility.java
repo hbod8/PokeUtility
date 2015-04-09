@@ -2,6 +2,7 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.net.*;
 import java.util.*;
 
@@ -30,7 +31,7 @@ class Search {
     public String[] names() {
         String[] namesOfPokemon = null;
         try {
-            File dexFolder = new File("pokedex");
+            File dexFolder = new File("resources/pokedex");
             namesOfPokemon = dexFolder.list();
         } catch(Exception e) {
             System.err.println(e);
@@ -42,7 +43,7 @@ class Search {
         Pokemon data = null;
         ObjectInputStream ois;
         try {
-            ois = new ObjectInputStream(new FileInputStream(new File("pokedex/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".obj")));
+            ois = new ObjectInputStream(new FileInputStream(new File("resources/pokedex/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".obj")));
             data = (Pokemon) ois.readObject();
             ois.close();
         } catch(Exception e) {
@@ -55,8 +56,8 @@ class Search {
 class PokeUtilityGUI implements Runnable {
     public void run() {
         
-        Font customFont = new Font("Press Start 2P", Font.PLAIN, 14);
-        try {customFont.createFont(Font.PLAIN, new File("font.ttf"));}
+        Font customFont = null;
+        try {customFont = Font.createFont(Font.PLAIN, new File("resources/PressStart2P.ttf")).deriveFont(Font.PLAIN, 14);}
         catch (Exception e) {System.err.println("Error loading font: " + e);}
         
         JFrame window = new JFrame("Pokemon Utility");
@@ -66,13 +67,40 @@ class PokeUtilityGUI implements Runnable {
         window.setVisible(true);
         
         JTextArea content = new JTextArea();
-        DefaultCaret caret = (DefaultCaret)content.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         content.setFont(customFont);
+        content.setEditable(false);
+        
+        DefaultCaret caret = (DefaultCaret)content.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
         
         JScrollPane jsp = new JScrollPane(content);
         window.add(jsp, BorderLayout.CENTER);
         
+        JTextField input = new JTextField();
+        input.setFont(customFont);
+        input.addActionListener(new SearchInput(input, content));
+        window.add(input, BorderLayout.PAGE_START);
+        
+    }
+}
+
+class SearchInput implements ActionListener {
+    public JTextField input;
+    public JTextArea output;
+    public SearchInput(JTextField input, JTextArea output) {
+        this.input = input;
+        this.output = output;
+    }
+    public void actionPerformed(ActionEvent ae) {
+        Search Search = new Search();
+        output.setText("");
+        String[] results = Search.searchByName(input.getText());
+        Pokemon result;
+        for (int i = 0; i < results.length; i++) {
+            result = Search.loadData(results[i]);
+            output.append((i + 1) + ". " + result.getDexNumber() + " " + result.getName() + "\n\n\tType:" + result.getType() + "\n\tDescription:" + result.getDescription() + "\n\n");
+        }
+        input.setText("");
     }
 }
 
