@@ -1,5 +1,7 @@
 import java.io.*;
 import javax.swing.*;
+import javax.swing.text.*;
+import java.awt.*;
 import java.net.*;
 import java.util.*;
 
@@ -11,16 +13,7 @@ public class PokeUtility {
         String[] files = Search.names();
         System.out.println(files.length);
         
-        System.out.println("Results for '" + args[0] + "'...");
-        String[] results = Search.searchByName(args[0]);
-        Pokemon result;
-        for (int i = 0; i < results.length; i++) {
-            result = Search.loadData(results[i]);
-            System.out.println((i + 1) + ". " + result.getDexNumber() + " " + result.getName());
-            System.out.println();
-            System.out.println("\tType:" + result.getType());
-            System.out.println();
-        }
+        SwingUtilities.invokeLater(new PokeUtilityGUI());
     }
 }
 
@@ -28,7 +21,7 @@ class Search {
     public String[] searchByName(String keyword) {
         keyword = keyword.toLowerCase();
         String[] names = this.names();
-        List<String> results = new ArrayList<String>();
+        java.util.List<String> results = new ArrayList<String>();
         for (int i = 0; i < names.length; i++) {
             if (names[i].contains(keyword)) results.add(names[i]);
         }
@@ -56,6 +49,30 @@ class Search {
             System.err.println(e);
         }
         return data;
+    }
+}
+
+class PokeUtilityGUI implements Runnable {
+    public void run() {
+        
+        Font customFont = new Font("Press Start 2P", Font.PLAIN, 14);
+        try {customFont.createFont(Font.PLAIN, new File("font.ttf"));}
+        catch (Exception e) {System.err.println("Error loading font: " + e);}
+        
+        JFrame window = new JFrame("Pokemon Utility");
+        window.setSize(700, 500);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setLayout(new BorderLayout());
+        window.setVisible(true);
+        
+        JTextArea content = new JTextArea();
+        DefaultCaret caret = (DefaultCaret)content.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        content.setFont(customFont);
+        
+        JScrollPane jsp = new JScrollPane(content);
+        window.add(jsp, BorderLayout.CENTER);
+        
     }
 }
 
