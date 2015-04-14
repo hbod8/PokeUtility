@@ -16,7 +16,7 @@ public class PokedexConstructor {
                 imageBytes.add(iByte);
             }
             //Add a byte[] for image data in Pokemon.class and a int getImageSize for the array also set the byte[] data
-            newPkmn.set(attr[0], attr[1], attr[2], "NA", "NA", "NA", "NA", imageBytes);
+            newPkmn.set(attr[0], attr[1], attr[2], "NA", "NA", "NA", "NA", imageBytes.toArray());
             saveObject(attr[1], newPkmn);
         }
     }
