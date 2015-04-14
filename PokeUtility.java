@@ -115,6 +115,7 @@ class Pokemon implements Serializable {
     public String ability;
     public String hiddenAbility;
     public String evolution;
+    public byte[] icon;
     
     public String getDexNumber() {
         return this.dexNumber;
@@ -137,6 +138,9 @@ class Pokemon implements Serializable {
     public String getEvolution() {
         return this.evolution;
     }
+    public byte[] getIcon() {
+        return this.icon;
+    }
     public String get(String attribute) {
         switch (attribute) {
             case "dexNumber": return this.dexNumber;
@@ -149,7 +153,7 @@ class Pokemon implements Serializable {
         }
     }
     
-    public void set(String dexNumber, String name, String type, String description, String ability, String hiddenAbility, String evolution) {
+    public void set(String dexNumber, String name, String type, String description, String ability, String hiddenAbility, String evolution, byte[] icon) {
         this.dexNumber = dexNumber;
         this.name = name;
         this.type = type;
@@ -157,5 +161,6 @@ class Pokemon implements Serializable {
         this.ability = ability;
         this.hiddenAbility = hiddenAbility;
         this.evolution = evolution;
+        this.icon = icon;
     }
 }
