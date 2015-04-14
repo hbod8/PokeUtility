@@ -8,6 +8,7 @@ public class PokedexConstructor {
         Pokemon newPkmn = new Pokemon();
         while ((data = br.readLine()) != null) {
             attr = data.substring(1, data.length() - 1).split("/");
+            //Add a byte[] for image data in Pokemon.class and a int getImageSize for the array also set the byte[] data
             newPkmn.set(attr[0], attr[1], attr[2], "NA", "NA", "NA", "NA");
             saveObject(attr[1], newPkmn);
         }
