@@ -69,6 +69,7 @@ class PokeUtilityGUI implements Runnable {
         JTextArea content = new JTextArea();
         content.setFont(customFont);
         content.setEditable(false);
+        content.setMargin(new Insets(10, 10, 10, 10));
         
         DefaultCaret caret = (DefaultCaret)content.getCaret();
         caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
@@ -78,6 +79,7 @@ class PokeUtilityGUI implements Runnable {
         
         JTextField input = new JTextField();
         input.setFont(customFont);
+        input.setMargin(new Insets(3, 3, 3, 3));
         input.addActionListener(new SearchInput(input, content));
         window.add(input, BorderLayout.PAGE_START);
         
