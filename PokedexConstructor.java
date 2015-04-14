@@ -2,7 +2,7 @@ import java.io.*;
 
 public class PokedexConstructor {
     public static void main(String args[]) throws Exception {
-        BufferedReader br = new BufferedReader(new FileReader("pokedex.txt"));
+        BufferedReader br = new BufferedReader(new FileReader("resources/pokedex.txt"));
         String data;
         String[] attr = new String[10];
         Pokemon newPkmn = new Pokemon();
