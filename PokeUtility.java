@@ -66,7 +66,7 @@ class PokeUtilityGUI implements Runnable {
         window.setLayout(new BorderLayout());
         window.setVisible(true);
         
-        JTextArea content = new JTextArea();
+        JTextPane content = new JTextPane();
         content.setFont(customFont);
         content.setEditable(false);
         content.setMargin(new Insets(10, 10, 10, 10));
@@ -88,8 +88,8 @@ class PokeUtilityGUI implements Runnable {
 
 class SearchInput implements ActionListener {
     public JTextField input;
-    public JTextArea output;
-    public SearchInput(JTextField input, JTextArea output) {
+    public JTextPane output;
+    public SearchInput(JTextField input, JTextPane output) {
         this.input = input;
         this.output = output;
     }
@@ -98,10 +98,22 @@ class SearchInput implements ActionListener {
         output.setText("");
         String[] results = Search.searchByName(input.getText());
         Pokemon result;
+        
+        StyledDocument sd = output.getStyledDocument();
+        Style icon = sd.addStyle("icon", null);
+        
         for (int i = 0; i < results.length; i++) {
             result = Search.loadData(results[i]);
-            output.append((i + 1) + ". " + result.getDexNumber() + " " + result.getName() + "\n\n\tType:" + result.getType() + "\n\tDescription:" + result.getDescription() + "\n\n");
+            StyleConstants.setIcon(icon, new ImageIcon(result.getIcon()));
+            try {
+                sd.insertString(sd.getLength(), (i + 1) + ". " + result.getDexNumber() + " " + result.getName() + "\n", null);
+                sd.insertString(sd.getLength(), "icon\n", icon);
+                sd.insertString(sd.getLength(), "\tType:" + result.getType() + "\n\tDescription:" + result.getDescription() + "\n\n", null);
+            } catch(Exception e) {
+                System.err.println(e);
+            }
         }
+        output.setStyledDocument(sd);
         input.setText("");
     }
 }
