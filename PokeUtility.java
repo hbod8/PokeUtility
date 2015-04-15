@@ -106,7 +106,7 @@ class SearchInput implements ActionListener {
             result = Search.loadData(results[i]);
             StyleConstants.setIcon(icon, new ImageIcon(result.getIcon()));
             try {
-                sd.insertString(sd.getLength(), (i + 1) + ". " + result.getDexNumber() + " " + result.getName() + "\n", null);
+                sd.insertString(sd.getLength(), (i + 1) + ". #" + result.getDexNumber() + " " + result.getName() + "\n", null);
                 sd.insertString(sd.getLength(), "icon\n", icon);
                 sd.insertString(sd.getLength(), "\tType:" + result.getType() + "\n\tDescription:" + result.getDescription() + "\n\n", null);
             } catch(Exception e) {
