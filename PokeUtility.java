@@ -10,6 +10,8 @@ public class PokeUtility {
     public static void main(String args[]) {
         Search Search = new Search();
         
+//        Search.unPack();
+        
         System.out.println("Files found:");
         String[] files = Search.names();
         System.out.println(files.length);
@@ -50,6 +52,20 @@ class Search {
             System.err.println(e);
         }
         return data;
+    }
+    public void unPack() {
+        try {
+            File file = new File("resources/");
+            file.setReadable(true);
+            file.setWritable(true);
+            if (file.exists() != true) file.mkdir();
+            InputStream is = this.getClass().getResourceAsStream("resources/");
+            FileOutputStream fos = new FileOutputStream(file);
+            int d;
+            while ((d = is.read()) != -1) fos.write(d);
+        } catch(Exception e) {
+            System.err.println(e);
+        }
     }
 }
 
