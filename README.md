@@ -6,6 +6,8 @@ A pokedex for your desktop.
 - Insructions for use.
 - How to make a Pokemon.
 - How to customize a Pokemon.
+- Plans.
+- Notes.
 
 ### Instructions for use: (Requires JDK)
 
@@ -33,5 +35,18 @@ A pokedex for your desktop.
 4. Type `cd GIT_DIRECTORY` replacing `GIT_DIRECTORY` with the location of the the github files.
 5. Type `javac PokeUtility.java`.
 6. Run the PokeUtility by typing `java PokeUtility`.
+
+### How to make a Pokemon.
+
+### How to customize a Pokemon.
+
+### Plans.
+
+### Notes.
+
+#### Ideas:
+
+- Use the 2-3 to 23 to alphabetically list the images to complete the pokedex.
+
 
 *This File is a WIP (Work In Progress)*
