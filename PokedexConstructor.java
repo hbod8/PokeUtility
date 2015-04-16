@@ -10,11 +10,16 @@ public class PokedexConstructor {
         FileInputStream fis;
         byte[] imageData;
         byte iByte;
-        File file;
+        File file = null;
         while ((data = br.readLine()) != null) {
             attr = data.substring(1, data.length() - 1).split("/");
             
-            file = new File("resources/icons/bulbasuar.png");
+            try {
+                file = new File("resources/icons/" + attr[0] + ".png");
+            } catch (Exception e) {
+                file = null;
+            }
+            
             fis = new FileInputStream(file);
             imageData = new byte[(int)file.length()];
             fis.read(imageData);
