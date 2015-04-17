@@ -53,7 +53,7 @@ A pokedex for your desktop.
 
 5. Done! your modified pokeutility will be in the new `PokeUtility.jar` file.
 
-### How to customize a Pokemon.
+## How to customize a Pokemon.
 ##### Only for people who know how to run and compile java programs.
 
 1. In the resources folder you will find a file titled "pokedex.txt".  Open the file in a text editor and edit the data as follows:
