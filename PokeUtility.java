@@ -5,16 +5,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
 import java.util.*;
+import java.util.jar.*;
 
 public class PokeUtility {
     public static void main(String args[]) {
         Search Search = new Search();
         
-//        Search.unPack();
-        
-        System.out.println("Files found:");
-        String[] files = Search.names();
-        System.out.println(files.length);
+//        Search.names();
         
         SwingUtilities.invokeLater(new PokeUtilityGUI());
     }
@@ -31,21 +28,26 @@ class Search {
         return results.toArray(new String[results.size()]);
     }
     public String[] names() {
-        String[] namesOfPokemon = null;
+        java.util.List<String> namesOfPokemon = new ArrayList<String>();
         try {
-            File dexFolder = new File("resources/pokedex");
-            namesOfPokemon = dexFolder.list();
+            JarFile jf = new JarFile("PokeUtility.jar");
+            Enumeration<JarEntry> je = jf.entries();
+            JarEntry entry;
+            String name;
+            while (je.hasMoreElements()) {
+                name = je.nextElement().getName();
+                if (name.startsWith("resources/pokedex/")) namesOfPokemon.add(name.substring(18, name.length() - 4).toLowerCase());
+            }
         } catch(Exception e) {
             System.err.println(e);
         }
-        for (int a = 0; a < namesOfPokemon.length; a++) namesOfPokemon[a] = namesOfPokemon[a].substring(0, namesOfPokemon[a].length() - 4).toLowerCase();
-        return namesOfPokemon;
+        return toPrimitiveString(namesOfPokemon);
     }
     public Pokemon loadData(String name) {
         Pokemon data = null;
         ObjectInputStream ois;
         try {
-            ois = new ObjectInputStream(new FileInputStream(new File("resources/pokedex/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".obj")));
+            ois = new ObjectInputStream(this.getClass().getResourceAsStream("resources/pokedex/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".obj"));
             data = (Pokemon) ois.readObject();
             ois.close();
         } catch(Exception e) {
@@ -53,19 +55,12 @@ class Search {
         }
         return data;
     }
-    public void unPack() {
-        try {
-            File file = new File("resources/");
-            file.setReadable(true);
-            file.setWritable(true);
-            if (file.exists() != true) file.mkdir();
-            InputStream is = this.getClass().getResourceAsStream("resources/");
-            FileOutputStream fos = new FileOutputStream(file);
-            int d;
-            while ((d = is.read()) != -1) fos.write(d);
-        } catch(Exception e) {
-            System.err.println(e);
+    public String[] toPrimitiveString(java.util.List<String> objString) {
+        String[] string = new String[objString.size()];
+        for (int i = 0; i < objString.size(); i++) {
+            string[i] = objString.get(i);
         }
+        return string;
     }
 }
 
@@ -73,7 +68,7 @@ class PokeUtilityGUI implements Runnable {
     public void run() {
         
         Font customFont = null;
-        try {customFont = Font.createFont(Font.PLAIN, new File("resources/PressStart2P.ttf")).deriveFont(Font.PLAIN, 14);}
+        try {customFont = Font.createFont(Font.PLAIN, this.getClass().getResourceAsStream("resources/PressStart2P.ttf")).deriveFont(Font.PLAIN, 14);}
         catch (Exception e) {System.err.println("Error loading font: " + e);}
         
         JFrame window = new JFrame("Pokemon Utility");
