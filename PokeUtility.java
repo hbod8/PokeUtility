@@ -5,14 +5,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
 import java.util.*;
+import java.util.jar.*;
 
 public class PokeUtility {
     public static void main(String args[]) {
         Search Search = new Search();
         
-        System.out.println("Files found:");
-        String[] files = Search.names();
-        System.out.println(files.length);
+//        Search.names();
         
         SwingUtilities.invokeLater(new PokeUtilityGUI());
     }
@@ -29,21 +28,26 @@ class Search {
         return results.toArray(new String[results.size()]);
     }
     public String[] names() {
-        String[] namesOfPokemon = null;
+        java.util.List<String> namesOfPokemon = new ArrayList<String>();
         try {
-            File dexFolder = new File("resources/pokedex");
-            namesOfPokemon = dexFolder.list();
+            JarFile jf = new JarFile("PokeUtility.jar");
+            Enumeration<JarEntry> je = jf.entries();
+            JarEntry entry;
+            String name;
+            while (je.hasMoreElements()) {
+                name = je.nextElement().getName();
+                if (name.startsWith("resources/pokedex/")) namesOfPokemon.add(name.substring(18, name.length() - 4).toLowerCase());
+            }
         } catch(Exception e) {
             System.err.println(e);
         }
-        for (int a = 0; a < namesOfPokemon.length; a++) namesOfPokemon[a] = namesOfPokemon[a].substring(0, namesOfPokemon[a].length() - 4).toLowerCase();
-        return namesOfPokemon;
+        return toPrimitiveString(namesOfPokemon);
     }
     public Pokemon loadData(String name) {
         Pokemon data = null;
         ObjectInputStream ois;
         try {
-            ois = new ObjectInputStream(new FileInputStream(new File("resources/pokedex/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".obj")));
+            ois = new ObjectInputStream(this.getClass().getResourceAsStream("resources/pokedex/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".obj"));
             data = (Pokemon) ois.readObject();
             ois.close();
         } catch(Exception e) {
@@ -51,13 +55,20 @@ class Search {
         }
         return data;
     }
+    public String[] toPrimitiveString(java.util.List<String> objString) {
+        String[] string = new String[objString.size()];
+        for (int i = 0; i < objString.size(); i++) {
+            string[i] = objString.get(i);
+        }
+        return string;
+    }
 }
 
 class PokeUtilityGUI implements Runnable {
     public void run() {
         
         Font customFont = null;
-        try {customFont = Font.createFont(Font.PLAIN, new File("resources/PressStart2P.ttf")).deriveFont(Font.PLAIN, 14);}
+        try {customFont = Font.createFont(Font.PLAIN, this.getClass().getResourceAsStream("resources/PressStart2P.ttf")).deriveFont(Font.PLAIN, 14);}
         catch (Exception e) {System.err.println("Error loading font: " + e);}
         
         JFrame window = new JFrame("Pokemon Utility");
@@ -66,9 +77,10 @@ class PokeUtilityGUI implements Runnable {
         window.setLayout(new BorderLayout());
         window.setVisible(true);
         
-        JTextArea content = new JTextArea();
+        JTextPane content = new JTextPane();
         content.setFont(customFont);
         content.setEditable(false);
+        content.setMargin(new Insets(10, 10, 10, 10));
         
         DefaultCaret caret = (DefaultCaret)content.getCaret();
         caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
@@ -78,6 +90,7 @@ class PokeUtilityGUI implements Runnable {
         
         JTextField input = new JTextField();
         input.setFont(customFont);
+        input.setMargin(new Insets(3, 3, 3, 3));
         input.addActionListener(new SearchInput(input, content));
         window.add(input, BorderLayout.PAGE_START);
         
@@ -86,8 +99,8 @@ class PokeUtilityGUI implements Runnable {
 
 class SearchInput implements ActionListener {
     public JTextField input;
-    public JTextArea output;
-    public SearchInput(JTextField input, JTextArea output) {
+    public JTextPane output;
+    public SearchInput(JTextField input, JTextPane output) {
         this.input = input;
         this.output = output;
     }
@@ -96,10 +109,22 @@ class SearchInput implements ActionListener {
         output.setText("");
         String[] results = Search.searchByName(input.getText());
         Pokemon result;
+        
+        StyledDocument sd = output.getStyledDocument();
+        Style icon = sd.addStyle("icon", null);
+        
         for (int i = 0; i < results.length; i++) {
             result = Search.loadData(results[i]);
-            output.append((i + 1) + ". " + result.getDexNumber() + " " + result.getName() + "\n\n\tType:" + result.getType() + "\n\tDescription:" + result.getDescription() + "\n\n");
+            StyleConstants.setIcon(icon, new ImageIcon(result.getIcon()));
+            try {
+                sd.insertString(sd.getLength(), (i + 1) + ". #" + result.getDexNumber() + " " + result.getName() + "\n", null);
+                sd.insertString(sd.getLength(), "icon\n", icon);
+                sd.insertString(sd.getLength(), "\tType:" + result.getType() + "\n\tDescription:" + result.getDescription() + "\n\n", null);
+            } catch(Exception e) {
+                System.err.println(e);
+            }
         }
+        output.setStyledDocument(sd);
         input.setText("");
     }
 }
@@ -113,6 +138,7 @@ class Pokemon implements Serializable {
     public String ability;
     public String hiddenAbility;
     public String evolution;
+    public byte[] icon;
     
     public String getDexNumber() {
         return this.dexNumber;
@@ -135,6 +161,9 @@ class Pokemon implements Serializable {
     public String getEvolution() {
         return this.evolution;
     }
+    public byte[] getIcon() {
+        return this.icon;
+    }
     public String get(String attribute) {
         switch (attribute) {
             case "dexNumber": return this.dexNumber;
@@ -147,7 +176,7 @@ class Pokemon implements Serializable {
         }
     }
     
-    public void set(String dexNumber, String name, String type, String description, String ability, String hiddenAbility, String evolution) {
+    public void set(String dexNumber, String name, String type, String description, String ability, String hiddenAbility, String evolution, byte[] icon) {
         this.dexNumber = dexNumber;
         this.name = name;
         this.type = type;
@@ -155,5 +184,6 @@ class Pokemon implements Serializable {
         this.ability = ability;
         this.hiddenAbility = hiddenAbility;
         this.evolution = evolution;
+        this.icon = icon;
     }
 }
