@@ -25,7 +25,7 @@ public class PokedexConstructor {
             fis.read(imageData);
             fis.close();
             
-            newPkmn.set(attr[0], attr[1], attr[2], attr[3], attr[4], attr[5], attr[6], imageData);
+            newPkmn.set(attr[0], attr[1], attr[2], null, null, null, null, imageData);
             saveObject(attr[1], newPkmn);
             System.out.println(attr[1]);
         }
