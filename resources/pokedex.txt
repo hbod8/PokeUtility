@@ -503,7 +503,7 @@
 [489/Phione/WATER]
 [490/Manaphy/WATER]
 [491/Darkrai/DARK]
-[492/Shaymin/
+[492/Shaymin/GRASS]
 [493/Archeus/NORMAL]
 [494/Victini/PSYCHIC FIRE]
 [495/Snivy/GRASS]
