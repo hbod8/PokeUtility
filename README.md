@@ -1,6 +1,8 @@
 # PokeUtility
 A pokedex for your desktop.
 
+#### Help us by giving us your feedback [here](http://goo.gl/forms/IXylqIQJC4).
+
 ### Table of contents:
 
 - Insructions for use.
